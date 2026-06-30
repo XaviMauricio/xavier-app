@@ -475,13 +475,17 @@ onSnapshot(DOC, (snap) => {
     if (r.tasks?.date !== today) r.tasks = { date: today, items: [] };
     if (r.fitness?.lastDate !== today) r.fitness = { series:0, workMins:0, totalMins:0, lastDate: today };
     // Migrate tareas de mañana al día siguiente
-    if (r.tasksManana?.date === today) {
-      // mañana es hoy — promover como tareas del día
-      if (!r.tasks || r.tasks.date !== today) {
-        r.tasks = { date: today, items: r.tasksManana.items.map(i=>({...i,done:false})) };
+    // Si lo que se guardó como "mañana" ya es HOY (o quedó atrás), se promueve a tareas del día
+    if (r.tasksManana && r.tasksManana.date !== tomorrow) {
+      const tareasAPromover = r.tasksManana.items || [];
+      if (tareasAPromover.length > 0) {
+        const tasksHoyBase = (r.tasks && r.tasks.date === today) ? r.tasks.items : [];
+        const idsExistentes = new Set(tasksHoyBase.map(t=>t.id));
+        const nuevas = tareasAPromover.filter(t=>!idsExistentes.has(t.id)).map(t=>({...t,done:false}));
+        r.tasks = { date: today, items: [...tasksHoyBase, ...nuevas] };
       }
       r.tasksManana = { date: tomorrow, items: [] };
-    } else if (!r.tasksManana || r.tasksManana.date !== tomorrow) {
+    } else if (!r.tasksManana) {
       r.tasksManana = { date: tomorrow, items: [] };
     }
     if (!r.presupuesto) r.presupuesto = [];
