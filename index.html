@@ -21,7 +21,7 @@
   .logo span{color:var(--green);}
   .logo-sub{font-size:10px;color:var(--text3);font-weight:400;letter-spacing:2px;text-transform:uppercase;margin-top:1px;}
   .tabs{display:flex;gap:3px;padding:14px 12px;border-bottom:1px solid var(--border);}
-  .tab{flex:1;min-width:0;padding:9px 2px;border:none;border-radius:10px;background:transparent;color:var(--text3);font-size:10px;font-weight:600;cursor:pointer;text-transform:uppercase;letter-spacing:0.3px;transition:all 0.2s;}
+  .tab{flex:1;min-width:0;padding:9px 0;border:none;border-radius:10px;background:transparent;color:var(--text3);font-size:9px;font-weight:600;cursor:pointer;text-transform:uppercase;letter-spacing:0;transition:all 0.2s;white-space:nowrap;}
   .tab.active{background:var(--surface2);color:var(--green);}
   .tab-icon{font-size:15px;display:block;margin-bottom:2px;}
   .section{display:none;padding:20px;}
@@ -98,6 +98,24 @@
   .carro-task-nota{font-size:11px;color:var(--text3);margin-top:2px;}
   .carro-task-fecha{font-size:10px;color:var(--text3);}
   .carro-del{color:var(--text3);font-size:16px;padding:2px 4px;cursor:pointer;flex-shrink:0;}
+
+  /* METAS SEMANALES */
+  .week-nav{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px 12px;margin-bottom:12px;}
+  .week-btn{width:38px;height:38px;border-radius:10px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;}
+  .week-center{text-align:center;flex:1;cursor:pointer;}
+  .week-label{font-size:16px;font-weight:800;}
+  .week-sub{font-size:10px;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-top:2px;font-weight:700;}
+  .meta-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;transition:all 0.2s;}
+  .meta-card.hecha{border-color:rgba(34,197,94,0.4);background:rgba(34,197,94,0.05);}
+  .meta-top{display:flex;align-items:flex-start;gap:12px;}
+  .meta-cb{width:26px;height:26px;border-radius:8px;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;margin-top:1px;transition:all 0.2s;}
+  .meta-card.hecha .meta-cb{background:var(--green);border-color:var(--green);color:#000;}
+  .meta-title{flex:1;font-size:15px;font-weight:600;line-height:1.35;word-break:break-word;}
+  .meta-card.hecha .meta-title{text-decoration:line-through;color:var(--text3);}
+  .meta-del{color:var(--text3);font-size:16px;padding:2px 4px;cursor:pointer;flex-shrink:0;}
+  .meta-pasos-label{font-size:10px;color:var(--text3);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:12px 0 6px;}
+  .meta-pasos{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);font-size:13px;font-family:'Inter',sans-serif;resize:vertical;outline:none;min-height:70px;}
+  .meta-pasos:focus{border-color:var(--green);}
 
   /* NEGOCIOS */
   .biz-card{background:var(--surface);border-radius:14px;border:1px solid var(--border);padding:16px;margin-bottom:10px;transition:border-color 0.2s;}
@@ -221,6 +239,7 @@
   <button class="tab active" onclick="switchTab('dinero',this)"><span class="tab-icon">💰</span>Dinero</button>
   <button class="tab" onclick="switchTab('negocios',this)"><span class="tab-icon">🚀</span>Negocios</button>
   <button class="tab" onclick="switchTab('habitos',this)"><span class="tab-icon">✅</span>Hábitos</button>
+  <button class="tab" onclick="switchTab('metas',this)"><span class="tab-icon">🎯</span>Metas</button>
   <button class="tab" onclick="switchTab('carro',this)"><span class="tab-icon">🚗</span>Carro</button>
   <button class="tab" onclick="switchTab('fitness',this)"><span class="tab-icon">⏱️</span>Fitness</button>
 </div>
@@ -350,6 +369,30 @@
     <div class="task-add-row">
       <input class="task-add-input" id="taskManInput" placeholder="+ Planificar para mañana..." onkeydown="if(event.key==='Enter')addTask('manana')">
       <button class="task-add-btn" style="background:var(--purple);" onclick="addTask('manana')">+</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== METAS SEMANALES ===== -->
+<div id="sec-metas" class="section">
+  <p class="section-title">Metas semanales</p>
+  <div class="week-nav">
+    <button class="week-btn" onclick="changeWeek(-1)">‹</button>
+    <div class="week-center" onclick="goThisWeek()">
+      <div class="week-label" id="weekLabel">—</div>
+      <div class="week-sub" id="weekSub"></div>
+    </div>
+    <button class="week-btn" onclick="changeWeek(1)">›</button>
+  </div>
+  <div class="money-card" style="margin-bottom:14px;">
+    <div class="progress-label"><span id="metasProgLabel">0 / 0 cumplidas</span><span id="metasPct">0%</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="metasProgFill" style="width:0%"></div></div>
+  </div>
+  <div id="metasList"></div>
+  <div class="task-card" style="margin-top:4px;">
+    <div class="task-add-row" style="border-top:none;">
+      <input class="task-add-input" id="metaInput" placeholder="+ Nueva meta de esta semana..." onkeydown="if(event.key==='Enter')addMeta()">
+      <button class="task-add-btn" onclick="addMeta()">+</button>
     </div>
   </div>
 </div>
@@ -539,6 +582,7 @@ let state = {
   presupuesto: [],
   carro: { modelo:'', anio:'', placa:'', km:'', items:[] },
   fuentes: [],
+  metas: [],
   habitos: { date: today, done: [] },
   tasks: { date: today, items: [] },
   tasksManana: { date: tomorrow, items: [] }, // NEW: tareas de mañana
@@ -584,6 +628,7 @@ onSnapshot(DOC, (snap) => {
     }
     if (!r.presupuesto) r.presupuesto = [];
     if (!r.fuentes) r.fuentes = [];
+    if (!r.metas) r.metas = [];
     if (!r.carro) r.carro = { modelo:'', anio:'', placa:'', km:'', items:[] };
     if (!r.carro.items) r.carro.items = [];
     state = { ...state, ...r };
@@ -937,6 +982,84 @@ window.deleteItem = () => {
   closeModal(); scheduleSave(); renderAll();
 };
 
+// ===== METAS SEMANALES =====
+const MESES_C=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+function toISO(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function parseISO(s){ const [y,m,d]=s.split('-').map(Number); return new Date(y,m-1,d); }
+function weekStartISO(date){
+  const d=new Date(date.getFullYear(),date.getMonth(),date.getDate());
+  d.setDate(d.getDate()-((d.getDay()+6)%7)); // semana inicia lunes
+  return toISO(d);
+}
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+let metaWeek = weekStartISO(new Date());
+
+window.changeWeek = (n) => {
+  const d=parseISO(metaWeek); d.setDate(d.getDate()+7*n);
+  metaWeek=toISO(d); renderMetas(true);
+};
+window.goThisWeek = () => { metaWeek=weekStartISO(new Date()); renderMetas(true); };
+
+function renderMetas(force=false){
+  const ae=document.activeElement;
+  // No reconstruir la lista mientras se escribe en un cuadro de pasos
+  if(!force && ae && ae.classList && ae.classList.contains('meta-pasos')) return;
+
+  const ini=parseISO(metaWeek);
+  const fin=new Date(ini); fin.setDate(fin.getDate()+6);
+  document.getElementById('weekLabel').textContent = ini.getMonth()===fin.getMonth()
+    ? `${ini.getDate()} – ${fin.getDate()} ${MESES_C[fin.getMonth()]}`
+    : `${ini.getDate()} ${MESES_C[ini.getMonth()]} – ${fin.getDate()} ${MESES_C[fin.getMonth()]}`;
+  const diff=Math.round((ini-parseISO(weekStartISO(new Date())))/604800000);
+  document.getElementById('weekSub').textContent =
+    diff===0?'Esta semana':diff===-1?'Semana pasada':diff===1?'Próxima semana':diff<0?`Hace ${-diff} semanas`:`En ${diff} semanas`;
+
+  const metas=(state.metas||[]).filter(m=>m.semana===metaWeek);
+  const hechas=metas.filter(m=>m.hecha).length;
+  const pct=metas.length?Math.round(hechas/metas.length*100):0;
+  document.getElementById('metasProgLabel').textContent=`${hechas} / ${metas.length} cumplidas`;
+  document.getElementById('metasPct').textContent=pct+'%';
+  document.getElementById('metasProgFill').style.width=pct+'%';
+
+  document.getElementById('metasList').innerHTML = metas.length===0
+    ? `<div style="padding:22px 16px;text-align:center;color:var(--text3);font-size:13px;">Sin metas para esta semana. Agrega la primera 🎯</div>`
+    : metas.map(m=>`
+      <div class="meta-card ${m.hecha?'hecha':''}">
+        <div class="meta-top">
+          <div class="meta-cb" onclick="toggleMeta(${m.id})">${m.hecha?'✓':''}</div>
+          <div class="meta-title">${esc(m.texto)}</div>
+          <span class="meta-del" onclick="deleteMeta(${m.id})">✕</span>
+        </div>
+        <div class="meta-pasos-label">👣 Pasos a seguir</div>
+        <textarea class="meta-pasos" rows="3" placeholder="1. Primer paso&#10;2. Segundo paso..." onchange="updateMetaPasos(${m.id},this.value)">${esc(m.pasos)}</textarea>
+      </div>`).join('');
+}
+function blurActive(){ if(document.activeElement && document.activeElement.blur) document.activeElement.blur(); }
+window.addMeta = () => {
+  const inp=document.getElementById('metaInput');
+  const texto=inp.value.trim();
+  if(!texto) return;
+  if(!state.metas) state.metas=[];
+  state.metas.push({id:Date.now(),texto,pasos:'',hecha:false,semana:metaWeek});
+  inp.value='';
+  scheduleSave(); renderMetas(true);
+};
+window.toggleMeta = (id) => {
+  blurActive();
+  state.metas=state.metas.map(m=>m.id===id?{...m,hecha:!m.hecha}:m);
+  scheduleSave(); renderMetas(true);
+};
+window.updateMetaPasos = (id,val) => {
+  state.metas=state.metas.map(m=>m.id===id?{...m,pasos:val}:m);
+  scheduleSave();
+};
+window.deleteMeta = (id) => {
+  blurActive();
+  if(!confirm('¿Borrar esta meta?')) return;
+  state.metas=state.metas.filter(m=>m.id!==id);
+  scheduleSave(); renderMetas(true);
+};
+
 // ===== CARRO =====
 window.saveCarroInfo = () => {
   state.carro.modelo = document.getElementById('carroModelo').value;
@@ -1080,6 +1203,7 @@ function renderAll(){
   renderDinero();
   renderNegocios();
   renderHabitos();
+  renderMetas();
   renderCarro();
   renderFitnessStats();
   updateTimerUI();
